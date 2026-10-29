@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Dashboard Log &amp; Access Review – REY</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+<link rel="stylesheet" href="assets/theme.css">
+<style>
+  #dash-root .gw { font-family: var(--font-anthropic-sans); color: var(--color-fg); display: flex; flex-direction: column; gap: var(--cds-gap-lg); }
+  #dash-root .gw-title { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; }
+  #dash-root .gw-lead { margin: var(--cds-gap-xs) 0 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); }
+  #dash-root .gw-lead b, #dash-root .gw-take b { color: var(--color-fg); font-weight: 600; }
+  #dash-root .gw-take { margin: var(--cds-gap-xs) 0 0; font-size: var(--cds-font-size-body); }
+  #dash-root .gw-nav { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); border-bottom: 1px solid var(--color-border-line); padding-bottom: var(--cds-gap-sm); }
+  #dash-root .gw-navgroup { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); align-items: center; }
+  #dash-root .gw-navlabel { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-right: var(--cds-gap-xs); }
+  #dash-root .gw-navsep { width: 1px; align-self: stretch; background: var(--color-border-line); margin: 0 var(--cds-gap-sm); }
+  #dash-root .gw-filters { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm) var(--cds-gap-md); align-items: flex-end; padding: var(--cds-pad-md); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
+  #dash-root .gw-field { display: flex; flex-direction: column; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  #dash-root .gw-field input { font: inherit; font-size: var(--cds-font-size-body); color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); min-width: 0; }
+  #dash-root .gw-q { width: min(100%, 18rem); }
+  #dash-root .gw-btns { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); }
+  #dash-root .gw-btn { font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); cursor: pointer; }
+  #dash-root .gw-btn[aria-pressed="true"], #dash-root .gw-btn[aria-selected="true"] { background: var(--color-fg); color: var(--color-bg); border-color: var(--color-fg); }
+  #dash-root .gw-btn-soon { color: var(--color-fg-muted); border-style: dashed; }
+  #dash-root .gw-page { display: flex; flex-direction: column; gap: var(--cds-gap-lg); }
+  #dash-root .gw-page-title { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+  #dash-root .gw-page-sub { font-size: var(--cds-font-size-body); color: var(--color-fg-muted); margin: var(--cds-gap-xs) 0 0; }
+  #dash-root .gw-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: var(--cds-gap-md); }
+  #dash-root .gw-tile, #dash-root .gw-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+  #dash-root .gw-tile-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0; }
+  #dash-root .gw-tile-value { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: var(--cds-gap-xs) 0; font-variant-numeric: tabular-nums; min-height: 1.2em; }
+  #dash-root .gw-tile-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0; }
+  #dash-root .gw-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--cds-gap-md); }
+  #dash-root .gw-card h3 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+  #dash-root .gw-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: var(--cds-gap-xs) 0 var(--cds-gap-md); }
+  #dash-root .gw-alert { font-size: var(--cds-font-size-caption); color: var(--color-warn); margin: 0; padding: var(--cds-pad-sm) var(--cds-pad-md); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-panel); }
+  #dash-root .gw-legend { display: flex; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+  #dash-root .gw-sw { display: inline-block; width: .6rem; height: .6rem; border-radius: 2px; margin-right: .3rem; vertical-align: middle; }
+  #dash-root .gw-chart { position: relative; min-height: 240px; }
+  #dash-root .gw-chart-sm { position: relative; min-height: 180px; }
+  #dash-root .gw-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 2; }
+  #dash-root .gw-tip-h { color: var(--cds-text-secondary); }
+  #dash-root .gw-tablebox { max-height: 26rem; overflow: auto; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
+  #dash-root .gw-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  #dash-root .gw-table th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: var(--cds-font-weight-medium); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  #dash-root .gw-table td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+  #dash-root .gw-table td.gw-wrap { min-width: 14rem; max-width: 28rem; }
+  #dash-root .gw-table td.gw-nw { white-space: nowrap; }
+  #dash-root .gw-bad { color: var(--color-bad); font-weight: 600; }
+  #dash-root .gw-warn { color: var(--color-warn); font-weight: 600; }
+  #dash-root .gw-ok { color: var(--color-ok); }
+  #dash-root .gw-check { display: flex; align-items: center; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+  #dash-root .gw-month { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  #dash-root .gw-month th, #dash-root .gw-month td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); text-align: right; }
+  #dash-root .gw-month th:first-child, #dash-root .gw-month td:first-child { text-align: left; }
+  #dash-root .gw-soon-list { margin: var(--cds-gap-sm) 0 0; padding-left: 1.2rem; font-size: var(--cds-font-size-body); }
+  #dash-root .gw-soon-list li { margin-bottom: var(--cds-gap-xs); }
+  #dash-root .gw-foot { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0; }
+  #dash-root [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+</style>
+<script src="assets/d3.min.js"></script>
+<script src="assets/dash-shim.js"></script>
+</head>
+<body>
+<div id="dash-root">
+
+
+<div class="gw">
+  <header>
+    <h1 class="gw-title">Dashboard Log &amp; Access Review</h1>
+    <p class="gw-lead">Menampilkan aktivitas <b data-draw="scope">—</b> dari <b data-draw="rstart">—</b> sampai <b data-draw="rend">—</b>. Pilih kategori log di bawah.</p>
+  </header>
+
+  <nav class="gw-nav" aria-label="Kategori log">
+    <div class="gw-navgroup">
+      <span class="gw-navlabel">Google Workspace</span>
+      <button class="gw-btn gw-tab" role="tab" data-page="user-activity">User Activity</button>
+      <button class="gw-btn gw-tab" role="tab" data-page="drive-activity">Drive Activity</button>
+      <button class="gw-btn gw-tab" role="tab" data-page="admin-activity">Admin Activity</button>
+    </div>
+    <span class="gw-navsep" aria-hidden="true"></span>
+    <div class="gw-navgroup">
+      <span class="gw-navlabel">Infrastruktur</span>
+      <button class="gw-btn gw-tab gw-btn-soon" role="tab" data-page="mikrotik">MikroTik</button>
+      <button class="gw-btn gw-tab gw-btn-soon" role="tab" data-page="unifi">UniFi</button>
+      <button class="gw-btn gw-tab gw-btn-soon" role="tab" data-page="fingerprint">Fingerprint</button>
+    </div>
+  </nav>
+
+  <div class="gw-filters" id="filter">
+    <label class="gw-field">Cari email (sebagian juga bisa)
+      <input class="gw-q" type="search" list="gw-emails" placeholder="contoh: nama@rey.id" aria-label="Cari email">
+    </label>
+    <datalist id="gw-emails" data-draw="emails" data-source="accounts"></datalist>
+    <label class="gw-field">Dari tanggal
+      <input class="gw-start" type="date" min="2026-01-01" max="2026-12-31" aria-label="Dari tanggal">
+    </label>
+    <label class="gw-field">Sampai tanggal
+      <input class="gw-end" type="date" min="2026-01-01" max="2026-12-31" aria-label="Sampai tanggal">
+    </label>
+    <div class="gw-field">Pilih cepat
+      <div class="gw-btns">
+        <button class="gw-btn gw-range" data-start="2026-09-01" data-end="2026-09-30">Sep 2026</button>
+        <button class="gw-btn gw-range" data-start="2026-10-01" data-end="2026-10-31">Okt 2026</button>
+        <button class="gw-btn gw-range" data-start="2026-09-01" data-end="2026-10-22">Periode review</button>
+        <button class="gw-btn gw-range" data-start="2026-08-31" data-end="2026-10-23">Semua data</button>
+        <button class="gw-btn gw-reset">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== USER ACTIVITY ===================== -->
+  <section class="gw-page" data-page="user-activity" id="user-activity">
+    <div>
+      <h2 class="gw-page-title">Google Workspace – User Activity</h2>
+      <p class="gw-page-sub">Login, login gagal, login dari luar negeri, dan status akun dibandingkan dengan data HR.</p>
+      <p class="gw-take"><b data-draw="u_nissue" data-source="accounts">—</b> dari <b data-draw="u_nacct" data-source="accounts">—</b> akun punya minimal satu masalah (Deactivated tapi aktif, orphan, dormant, atau tanpa 2SV).</p>
+    </div>
+    <div class="gw-tiles">
+      <div class="gw-tile"><p class="gw-tile-label">Login sukses</p><p class="gw-tile-value" data-draw="u_t_login" data-source="user_events">—</p><p class="gw-tile-note">Dalam rentang tanggal</p></div>
+      <div class="gw-tile"><p class="gw-tile-label">Login gagal</p><p class="gw-tile-value" data-draw="u_t_fail" data-source="user_events">—</p><p class="gw-tile-note">Salah password / ditolak</p></div>
+      <div class="gw-tile"><p class="gw-tile-label">Login dari luar negeri</p><p class="gw-tile-value" data-draw="u_t_foreign" data-source="user_events">—</p><p class="gw-tile-note">Negara selain Indonesia</p></div>
+      <div class="gw-tile"><p class="gw-tile-label">Akun tanpa 2SV</p><p class="gw-tile-value" data-draw="u_t_no2sv" data-source="accounts">—</p><p class="gw-tile-note">Status saat ini</p></div>
+      <div class="gw-tile"><p class="gw-tile-label">Temuan User Activity</p><p class="gw-tile-value" data-draw="u_t_find" data-source="findings">—</p><p class="gw-tile-note">Dari laporan review</p></div>
+    </div>
+    <div class="gw-grid">
+      <div class="gw-card" id="user-login-harian">
+        <h3>Login per hari</h3>
+        <p class="gw-note">Jumlah login sukses dan gagal per hari.</p>
+        <div class="gw-legend"><span><span class="gw-sw gw-sw-ok"></span>Login sukses</span><span><span class="gw-sw gw-sw-bad"></span>Login gagal</span></div>
+        <div class="gw-chart" data-draw="u_c_daily" data-source="user_events"></div>
+      </div>
+      <div class="gw-card" id="user-gagal-teratas">
+        <h3>Akun dengan login gagal terbanyak</h3>
+        <p class="gw-note">10 akun teratas dalam rentang tanggal.</p>
+        <div class="gw-chart-sm" data-draw="u_c_fail" data-source="user_events"></div>
+      </div>
+    </div>
+    <div class="gw-card" id="user-perbandingan">
+      <h3>Perbandingan per bulan</h3>
+      <p class="gw-note">Kolom selisih membandingkan bulan terakhir dengan bulan sebelumnya dalam rentang tanggal.</p>
+      <div data-draw="u_c_month" data-source="user_events"></div>
+    </div>
+    <div class="gw-card" id="user-akun">
+      <h3>Profil dan status akun</h3>
+      <label class="gw-check"><input type="checkbox" class="gw-issues"> Hanya tampilkan akun bermasalah (diabaikan saat mencari email)</label>
+      <p class="gw-note">Menampilkan <b data-draw="u_n_acct" data-source="accounts">—</b> akun. Login terakhir per tanggal tarik daftar akun (±28 Okt 2026).</p>
+      <div class="gw-tablebox">
+        <table class="gw-table" data-source="accounts" data-row-key="email">
+          <thead><tr><th data-field="email">Email</th><th data-field="klasifikasi">Klasifikasi</th><th data-field="masalah">Masalah</th><th data-field="status_hr">Status HR</th><th data-field="tgl_hapus_hr">Tgl hapus HR</th><th data-field="org_unit">Org unit</th><th data-field="2sv">2SV</th><th data-field="login_terakhir">Login terakhir</th></tr></thead>
+          <tbody data-draw="u_acct"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="gw-card" id="user-log">
+      <h3>Log User Activity</h3>
+      <p class="gw-note">Menampilkan <b data-draw="u_n_log" data-source="user_events">—</b> event terbaru (maksimal 300).</p>
+      <div class="gw-tablebox">
+        <table class="gw-table" data-source="user_events" data-row-key="id">
+          <thead><tr><th data-field="waktu">Waktu</th><th data-field="email">Email</th><th data-field="event">Event</th><th data-field="negara">Negara</th><th data-field="ip">IP</th><th data-field="login_type">Tipe login</th></tr></thead>
+          <tbody data-draw="u_log"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="gw-card" id="user-temuan">
+      <h3>Temuan User Activity</h3>
+      <p class="gw-note">Menampilkan <b data-draw="u_n_find" data-source="findings">—</b> temuan.</p>
+      <div class="gw-tablebox">
+        <table class="gw-table" data-source="findings" data-row-key="id">
+          <thead><tr><th data-field="id">ID</th><th data-field="risiko">Risiko</th><th data-field="judul">Temuan</th><th data-field="deskripsi">Deskripsi</th><th data-field="rekomendasi">Rekomendasi</th><th data-field="status">Status</th></tr></thead>
+          <tbody data-draw="u_find"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DRIVE ACTIVITY ===================== -->
+  <section class="gw-page" data-page="drive-activity" id="drive-activity" hidden>
+    <div>
+      <h2 class="gw-page-title">Google Workspace – Drive Activity</h2>
+      <p class="gw-page-sub">Download, perubahan sharing, file yang dibuka ke publik, dan akses oleh akun di luar domain.</p>
+    </div>
+    <p class="gw-alert">Log Drive saat ini hanya sampel 22–23 Okt 2026 karena export terpotong 100.000 baris. Pilih “Semua data” untuk melihat seluruh sampel.</p>
+    <div class="gw-tiles">
+      <div class="gw-tile"><p class="gw-tile-label">Event berisiko</p><p class="gw-tile-value" data-draw="d_t_all" data-source="drive_events">—</p><p class="gw-tile-note">Semua kategori</p></div>
+      <div class="gw-tile"><p class="gw-tile-label">Download</p><p class="gw-tile-value" data-draw="d_t_dl" data-source="drive_events">—</p><p class="gw-tile-note">File diunduh</p></div>
+      <div class="gw-tile"><p class="gw-tile-label">Perubahan sharing</p><p class="gw-tile-value" data-draw="d_t_share" data-source="drive_events">—</p><p class="gw-tile-note">Akses/visibilitas diubah</p></div>
+      <div class="gw-tile"><p class="gw-tile-label">Dibuka ke publik</p><p class="gw-tile-value" data-draw="d_t_pub" data-source="drive_events">—</p><p class="gw-tile-note">Anyone with the link</p></div>
+      <div class="gw-tile"><p class="gw-tile-label">Akses akun eksternal</p><p class="gw-tile-value" data-draw="d_t_ext" data-source="drive_events">—</p><p class="gw-tile-note">Di luar domain rey.id</p></div>
+      <div class="gw-tile"><p class="gw-tile-label">Temuan Drive Activity</p><p class="gw-tile-value" data-draw="d_t_find" data-source="findings">—</p><p class="gw-tile-note">Dari laporan review</p></div>
+    </div>
+    <div class="gw-grid">
+      <div class="gw-card" id="drive-kategori">
+        <h3>Event per kategori</h3>
+        <p class="gw-note">Kategori merah adalah yang paling berisiko kebocoran data.</p>
+        <div class="gw-chart-sm" data-draw="d_c_cat" data-source="drive_events"></div>
+      </div>
+      <div class="gw-card" id="drive-download-teratas">
+        <h3>Akun dengan download terbanyak</h3>
+        <p class="gw-note">10 akun teratas dalam rentang tanggal.</p>
+        <div class="gw-chart-sm" data-draw="d_c_dl" data-source="drive_events"></div>
+      </div>
+    </div>
+    <div class="gw-card" id="drive-perbandingan">
+      <h3>Perbandingan per bulan</h3>
+      <p class="gw-note">Kolom selisih membandingkan bulan terakhir dengan bulan sebelumnya dalam rentang tanggal.</p>
+      <div data-draw="d_c_month" data-source="drive_events"></div>
+    </div>
+    <div class="gw-card" id="drive-log">
+      <h3>Log Drive Activity</h3>
+      <p class="gw-note">Menampilkan <b data-draw="d_n_log" data-source="drive_events">—</b> event terbaru (maksimal 300). Email dicocokkan ke aktor atau owner file.</p>
+      <div class="gw-tablebox">
+        <table class="gw-table" data-source="drive_events" data-row-key="id">
+          <thead><tr><th data-field="waktu">Waktu</th><th data-field="email">Aktor</th><th data-field="kategori">Kategori</th><th data-field="event">Event</th><th data-field="judul">Judul file</th><th data-field="visibilitas">Visibilitas</th><th data-field="owner">Owner</th></tr></thead>
+          <tbody data-draw="d_log"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="gw-card" id="drive-temuan">
+      <h3>Temuan Drive Activity</h3>
+      <p class="gw-note">Menampilkan <b data-draw="d_n_find" data-source="findings">—</b> temuan.</p>
+      <div class="gw-tablebox">
+        <table class="gw-table" data-source="findings" data-row-key="id">
+          <thead><tr><th data-field="id">ID</th><th data-field="risiko">Risiko</th><th data-field="judul">Temuan</th><th data-field="deskripsi">Deskripsi</th><th data-field="rekomendasi">Rekomendasi</th><th data-field="status">Status</th></tr></thead>
+          <tbody data-draw="d_find"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ADMIN ACTIVITY ===================== -->
+  <section class="gw-page" data-page="admin-activity" id="admin-activity" hidden>
+    <div>
+      <h2 class="gw-page-title">Google Workspace – Admin Activity</h2>
+      <p class="gw-page-sub">Aksi admin di Admin Console. Email dicocokkan ke admin pelaksana atau akun target. Alert Center Viewed otomatis tidak dihitung.</p>
+    </div>
+    <div class="gw-tiles">
+      <div class="gw-tile"><p class="gw-tile-label">Aksi admin</p><p class="gw-tile-value" data-draw="a_t_all" data-source="admin_events">—</p><p class="gw-tile-note">Dalam rentang tanggal</p></div>
+      <div class="gw-tile"><p class="gw-tile-label">Kebijakan, bypass, privilege</p><p class="gw-tile-value" data-draw="a_t_risk" data-source="admin_events">—</p><p class="gw-tile-note">Aksi berisiko tinggi</p></div>
+      <div class="gw-tile"><p class="gw-tile-label">Admin pelaksana</p><p class="gw-tile-value" data-draw="a_t_admins" data-source="admin_events">—</p><p class="gw-tile-note">Akun admin berbeda</p></div>
+      <div class="gw-tile"><p class="gw-tile-label">Akun dihapus / suspend</p><p class="gw-tile-value" data-draw="a_t_life" data-source="admin_events">—</p><p class="gw-tile-note">User Deletion / Suspension</p></div>
+      <div class="gw-tile"><p class="gw-tile-label">Temuan Admin Activity</p><p class="gw-tile-value" data-draw="a_t_find" data-source="findings">—</p><p class="gw-tile-note">Dari laporan review</p></div>
+    </div>
+    <div class="gw-grid">
+      <div class="gw-card" id="admin-kategori">
+        <h3>Aksi admin per kategori</h3>
+        <p class="gw-note">Kategori merah: kebijakan keamanan, bypass keamanan akun, dan privilege.</p>
+        <div class="gw-chart-sm" data-draw="a_c_cat" data-source="admin_events"></div>
+      </div>
+      <div class="gw-card" id="admin-pelaksana">
+        <h3>Aksi per admin pelaksana</h3>
+        <p class="gw-note">Untuk melihat pemisahan tugas antar admin.</p>
+        <div class="gw-chart-sm" data-draw="a_c_who" data-source="admin_events"></div>
+      </div>
+    </div>
+    <div class="gw-card" id="admin-perbandingan">
+      <h3>Perbandingan per bulan</h3>
+      <p class="gw-note">Kolom selisih membandingkan bulan terakhir dengan bulan sebelumnya dalam rentang tanggal.</p>
+      <div data-draw="a_c_month" data-source="admin_events"></div>
+    </div>
+    <div class="gw-card" id="admin-log">
+      <h3>Log Admin Activity</h3>
+      <p class="gw-note">Menampilkan <b data-draw="a_n_log" data-source="admin_events">—</b> aksi terbaru (maksimal 300). Cocokkan dengan tiket Jira di file kerja Excel.</p>
+      <div class="gw-tablebox">
+        <table class="gw-table" data-source="admin_events" data-row-key="id">
+          <thead><tr><th data-field="waktu">Waktu</th><th data-field="admin">Admin</th><th data-field="kategori">Kategori</th><th data-field="event">Event</th><th data-field="target">Target</th><th data-field="detail">Detail</th></tr></thead>
+          <tbody data-draw="a_log"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="gw-card" id="admin-temuan">
+      <h3>Temuan Admin Activity</h3>
+      <p class="gw-note">Menampilkan <b data-draw="a_n_find" data-source="findings">—</b> temuan.</p>
+      <div class="gw-tablebox">
+        <table class="gw-table" data-source="findings" data-row-key="id">
+          <thead><tr><th data-field="id">ID</th><th data-field="risiko">Risiko</th><th data-field="judul">Temuan</th><th data-field="deskripsi">Deskripsi</th><th data-field="rekomendasi">Rekomendasi</th><th data-field="status">Status</th></tr></thead>
+          <tbody data-draw="a_find"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MIKROTIK (belum ada data) ===================== -->
+  <section class="gw-page" data-page="mikrotik" id="mikrotik" hidden>
+    <div>
+      <h2 class="gw-page-title">MikroTik</h2>
+      <p class="gw-page-sub">Halaman ini disiapkan. Data belum diunggah.</p>
+    </div>
+    <div class="gw-card">
+      <h3>Data yang dibutuhkan</h3>
+      <ul class="gw-soon-list">
+        <li>Log router (System → Logs, atau hasil syslog ke server) dengan kolom waktu, topik, dan pesan.</li>
+        <li>Login ke router: akun, IP asal, berhasil atau gagal (topik <i>system, account</i>).</li>
+        <li>Firewall drop/reject bila logging diaktifkan: IP sumber, tujuan, port.</li>
+        <li>Perubahan konfigurasi oleh akun admin.</li>
+      </ul>
+      <p class="gw-note">Rencana tampilan: login gagal ke router, IP sumber teratas yang di-drop, dan riwayat perubahan konfigurasi.</p>
+    </div>
+  </section>
+
+  <!-- ===================== UNIFI (belum ada data) ===================== -->
+  <section class="gw-page" data-page="unifi" id="unifi" hidden>
+    <div>
+      <h2 class="gw-page-title">UniFi</h2>
+      <p class="gw-page-sub">Halaman ini disiapkan. Data belum diunggah.</p>
+    </div>
+    <div class="gw-card">
+      <h3>Data yang dibutuhkan</h3>
+      <ul class="gw-soon-list">
+        <li>Event/alarm dari UniFi Controller: waktu, jenis event, perangkat/AP, pesan.</li>
+        <li>Daftar client: MAC, hostname, SSID, AP, waktu pertama dan terakhir terlihat.</li>
+        <li>Login admin ke controller, bila tersedia.</li>
+      </ul>
+      <p class="gw-note">Rencana tampilan: jumlah client per AP dan SSID, perangkat baru tak dikenal, dan disconnect berulang.</p>
+    </div>
+  </section>
+
+  <!-- ===================== FINGERPRINT (belum ada data) ===================== -->
+  <section class="gw-page" data-page="fingerprint" id="fingerprint" hidden>
+    <div>
+      <h2 class="gw-page-title">Fingerprint</h2>
+      <p class="gw-page-sub">Halaman ini disiapkan. Data belum diunggah.</p>
+    </div>
+    <div class="gw-card">
+      <h3>Data yang dibutuhkan</h3>
+      <ul class="gw-soon-list">
+        <li>Export absensi mesin fingerprint: ID karyawan, waktu scan, jenis (masuk/keluar), ID mesin.</li>
+        <li>Mapping ID karyawan ke email kantor, supaya bisa dicari dengan kolom email yang sama.</li>
+        <li>Daftar user terdaftar di mesin, untuk mencocokkan karyawan yang sudah keluar.</li>
+      </ul>
+      <p class="gw-note">Rencana tampilan: rekap kehadiran, scan di luar jam kerja, dan karyawan keluar yang masih terdaftar di mesin.</p>
+    </div>
+  </section>
+
+  <p class="gw-foot">Sumber: export Admin Console Google Workspace (log ditarik 23 Okt 2026, daftar akun ±28 Okt 2026) dan List of User Access. Periode review 1 Sep – 22 Okt 2026.</p>
+</div>
+
+<script>
+(() => {
+  // ---------- Shared helpers ----------
+  const BULAN = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const RISK_ADMIN = ['Kebijakan keamanan', 'Bypass keamanan akun', 'Privilege'];
+  const RISK_DRIVE = ['Dibuka ke publik', 'Akses akun eksternal'];
+  const rows = (id) => { const r = dash.data(id); return r.status === 'ok' ? r.data : null; };
+  const q = () => (dash.params().q || '').trim().toLowerCase();
+  const inRange = (w) => { const d = String(w).slice(0, 10); const p = dash.params(); return (!p.start || d >= p.start) && (!p.end || d <= p.end); };
+  const tglID = (s) => { if (!s) return '—'; const [y, m, d] = s.split('-'); return `${Number(d)} ${BULAN[Number(m) - 1]} ${y}`; };
+  const fmt = d3.format(',');
+  const G = window.gws = {
+    BULAN, RISK_ADMIN, RISK_DRIVE, rows, q, inRange, tglID, fmt,
+    user: () => { const r = rows('user_events'); if (!r) return null; const s = q(); return r.filter((x) => inRange(x.waktu) && (!s || (x.email || '').includes(s))); },
+    admin: () => { const r = rows('admin_events'); if (!r) return null; const s = q(); return r.filter((x) => x.kategori !== 'Alert Center (otomatis)' && inRange(x.waktu) && (!s || (x.admin || '').includes(s) || (x.target || '').includes(s))); },
+    drive: () => { const r = rows('drive_events'); if (!r) return null; const s = q(); return r.filter((x) => inRange(x.waktu) && (!s || (x.email || '').includes(s) || (x.owner || '').includes(s))); },
+    find: (tiket) => { const r = rows('findings'); if (!r) return null; const s = q(); return r.filter((x) => x.tiket === tiket && (!s || x.akun.toLowerCase().includes(s) || x.deskripsi.toLowerCase().includes(s))); },
+    loading: (id) => dash.data(id).status === 'loading',
+    setNum: (el, v, id) => { el.textContent = v == null ? '—' : fmt(v); el.classList.toggle('dash-skeleton', v == null && dash.data(id).status === 'loading'); },
+    time: (w) => String(w).slice(0, 16).replace('T', ' '),
+    emptyNote: (el, txt) => { const p = document.createElement('p'); p.className = 'gw-note'; p.textContent = txt; el.append(p); },
+  };
+
+  // Horizontal bar chart: data = [{k, n}], red(k) -> boolean
+  G.barsH = (el, data, red) => {
+    el.replaceChildren();
+    if (!data.length) { G.emptyNote(el, 'Tidak ada data untuk filter ini.'); return; }
+    const W = Math.max(260, el.clientWidth), rowH = 26, H = data.length * rowH + 8;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).style('display', 'block');
+    const probe = svg.append('g').selectAll('text').data(data).join('text').attr('font-size', 12).text((d) => d.k);
+    const ml = Math.min(W * 0.55, Math.ceil(d3.max(probe.nodes(), (n) => n.getComputedTextLength())) + 10); probe.remove();
+    const vprobe = svg.append('text').attr('font-size', 12).text(fmt(d3.max(data, (d) => d.n)));
+    const mr = Math.ceil(vprobe.node().getComputedTextLength()) + 8; vprobe.remove();
+    const x = d3.scaleLinear([0, d3.max(data, (d) => d.n)], [ml, W - mr]);
+    const y = d3.scaleBand(data.map((d) => d.k), [4, H - 4]).paddingInner(0.3);
+    const g = svg.selectAll('g.bar').data(data).join('g').attr('class', 'bar');
+    g.append('text').attr('x', ml - 8).attr('y', (d) => y(d.k) + y.bandwidth() / 2 + 4).attr('text-anchor', 'end').attr('font-size', 12).style('fill', 'var(--color-fg)')
+      .text((d) => { let t = d.k; const max = Math.floor((ml - 10) / 6.5); return t.length > max ? t.slice(0, max - 1) + '…' : t; });
+    g.append('rect').attr('x', ml).attr('y', (d) => y(d.k)).attr('height', y.bandwidth()).attr('width', (d) => Math.max(1, x(d.n) - ml)).attr('rx', 2)
+      .style('fill', (d) => (red && red(d.k) ? 'var(--cds-chart-status-critical)' : dash.colors[0]));
+    g.append('text').attr('x', (d) => x(d.n) + 4).attr('y', (d) => y(d.k) + y.bandwidth() / 2 + 4).attr('font-size', 12).style('fill', 'var(--color-fg-muted)').text((d) => fmt(d.n));
+  };
+  G.top = (r, key, n) => d3.rollups(r, (v) => v.length, (d) => d[key]).map(([k, c]) => ({ k: k || '(kosong)', n: c })).sort((a, b) => b.n - a.n).slice(0, n);
+
+  // Month comparison table: metrics = [[label, filterFn, upGood]]
+  G.monthTable = (el, r, metrics) => {
+    el.replaceChildren();
+    if (!r) { el.textContent = '—'; return; }
+    const mon = (w) => w.slice(0, 7);
+    const months = [...new Set(r.map((x) => mon(x.waktu)))].sort();
+    if (!months.length) { G.emptyNote(el, 'Tidak ada data untuk filter ini.'); return; }
+    const box = document.createElement('div'); box.style.overflowX = 'auto';
+    const t = document.createElement('table'); t.className = 'gw-month';
+    const hr = t.createTHead().insertRow();
+    const th = (txt) => { const c = document.createElement('th'); c.textContent = txt; hr.append(c); };
+    th('Metrik'); months.forEach((m) => th(`${BULAN[Number(m.slice(5)) - 1]} ${m.slice(0, 4)}`));
+    const two = months.length >= 2; if (two) th('Selisih');
+    const tb = t.createTBody();
+    metrics.forEach(([label, f, upGood]) => {
+      const tr = tb.insertRow(); tr.insertCell().textContent = label;
+      const vals = months.map((m) => r.filter((x) => mon(x.waktu) === m && f(x)).length);
+      vals.forEach((v) => { tr.insertCell().textContent = fmt(v); });
+      if (two) {
+        const diff = vals[vals.length - 1] - vals[vals.length - 2];
+        const c = tr.insertCell(); c.textContent = (diff > 0 ? '+' : '') + fmt(diff);
+        if (diff !== 0 && upGood !== null) c.className = (diff > 0) === upGood ? 'gw-ok' : 'gw-bad';
+      }
+    });
+    box.append(t); el.append(box);
+  };
+
+  // Log table body (latest first, max 300)
+  G.MAX = 300;
+  G.fillLog = (tb, r, cols) => {
+    const list = (r || []).slice().sort((a, b) => (a.waktu < b.waktu ? 1 : -1)).slice(0, G.MAX);
+    tb.replaceChildren(...list.map((x) => {
+      const tr = document.createElement('tr'); tr.dataset.key = x.id;
+      cols.forEach(([k, cls]) => { const td = tr.insertCell(); td.textContent = k === 'waktu' ? G.time(x[k]) : (x[k] || ''); if (cls) td.className = cls; });
+      return tr;
+    }));
+  };
+
+  // Findings table body
+  const ORDER = { High: 0, Medium: 1, Low: 2 };
+  G.fillFind = (tb, r) => {
+    const list = (r || []).slice().sort((a, b) => (ORDER[a.risiko] ?? 9) - (ORDER[b.risiko] ?? 9) || a.id.localeCompare(b.id));
+    tb.replaceChildren(...list.map((x) => {
+      const tr = document.createElement('tr'); tr.dataset.key = x.id;
+      [['id', 'gw-nw'], ['risiko', 'gw-nw'], ['judul', 'gw-nw'], ['deskripsi', 'gw-wrap'], ['rekomendasi', 'gw-wrap'], ['status', 'gw-nw']].forEach(([k, cls]) => {
+        const td = tr.insertCell(); td.textContent = x[k] || ''; td.className = cls;
+        if (k === 'risiko') td.className = 'gw-nw ' + (x[k] === 'High' ? 'gw-bad' : x[k] === 'Medium' ? 'gw-warn' : 'gw-ok');
+      });
+      return tr;
+    }));
+  };
+})();
+</script>
+
+<script>
+(() => {
+  // ---------- Navigation & filters ----------
+  const PAGES = ['user-activity', 'drive-activity', 'admin-activity', 'mikrotik', 'unifi', 'fingerprint'];
+  const fromHash = location.hash.slice(1);
+  if (PAGES.includes(fromHash)) dash.setParams({ page: fromHash });
+
+  document.querySelectorAll('.gw-tab').forEach((b) => b.addEventListener('click', () => { dash.setParams({ page: b.dataset.page }); dash.setLink(b.dataset.page); }));
+
+  let timer;
+  document.querySelectorAll('.gw-q').forEach((inp) => {
+    const push = () => dash.setParams({ q: inp.value.trim().toLowerCase() || null });
+    inp.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(push, 300); });
+    inp.addEventListener('change', push);
+    inp.addEventListener('blur', () => { clearTimeout(timer); push(); });
+  });
+  document.querySelectorAll('.gw-start, .gw-end').forEach((inp) => {
+    const key = inp.classList.contains('gw-start') ? 'start' : 'end';
+    inp.addEventListener('change', () => { if (inp.value && inp.validity.valid) dash.setParams({ [key]: inp.value }); });
+    inp.addEventListener('blur', () => { inp.value = dash.params()[key] ?? ''; });
+  });
+  document.querySelectorAll('.gw-range').forEach((b) => b.addEventListener('click', () => dash.setParams({ start: b.dataset.start, end: b.dataset.end })));
+  document.querySelectorAll('.gw-reset').forEach((b) => b.addEventListener('click', () => { const page = dash.params().page; dash.resetParams(); dash.setParams({ page }); }));
+  document.querySelectorAll('.gw-issues').forEach((c) => c.addEventListener('change', () => dash.setParams({ issues: c.checked })));
+
+  document.querySelectorAll('.gw-sw-ok').forEach((s) => { s.style.background = dash.colors[0]; });
+  document.querySelectorAll('.gw-sw-bad').forEach((s) => { s.style.background = 'var(--cds-chart-status-critical)'; });
+
+  dash.onData(() => {
+    const p = dash.params();
+    const page = PAGES.includes(p.page) ? p.page : 'user-activity';
+    document.querySelectorAll('.gw-tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.page === page)));
+    document.querySelectorAll('section.gw-page').forEach((s) => { s.hidden = s.dataset.page !== page; });
+    const dataPage = ['user-activity', 'drive-activity', 'admin-activity'].includes(page);
+    document.querySelectorAll('.gw-filters').forEach((f) => { f.hidden = !dataPage; });
+    document.querySelectorAll('.gw-q').forEach((i) => { if (i !== document.activeElement) i.value = p.q ?? ''; });
+    document.querySelectorAll('.gw-start').forEach((i) => { if (i !== document.activeElement) i.value = p.start ?? ''; });
+    document.querySelectorAll('.gw-end').forEach((i) => { if (i !== document.activeElement) i.value = p.end ?? ''; });
+    document.querySelectorAll('.gw-range').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.start === p.start && b.dataset.end === p.end)));
+    document.querySelectorAll('.gw-issues').forEach((c) => { c.checked = p.issues !== false; });
+  });
+
+  dash.draw('scope', (el) => { const s = window.gws.q(); el.textContent = s ? `email yang mengandung “${s}”` : 'semua akun'; });
+  dash.draw('rstart', (el) => { el.textContent = window.gws.tglID(dash.params().start); });
+  dash.draw('rend', (el) => { el.textContent = window.gws.tglID(dash.params().end); });
+  dash.draw('emails', (dl) => { const r = window.gws.rows('accounts') || []; dl.replaceChildren(...r.map((x) => new Option(x.email))); });
+})();
+</script>
+
+<script>
+(() => {
+  // ---------- USER ACTIVITY page ----------
+  const G = window.gws;
+  const isForeign = (x) => x.event === 'Login sukses' && x.negara !== 'ID' && x.negara !== 'N/A';
+  dash.draw('u_nacct', (el) => { const r = G.rows('accounts'); G.setNum(el, r ? r.length : null, 'accounts'); });
+  dash.draw('u_nissue', (el) => { const r = G.rows('accounts'); G.setNum(el, r ? r.filter((x) => x.masalah).length : null, 'accounts'); });
+  dash.draw('u_t_login', (el) => { const r = G.user(); G.setNum(el, r ? r.filter((x) => x.event === 'Login sukses').length : null, 'user_events'); });
+  dash.draw('u_t_fail', (el) => { const r = G.user(); G.setNum(el, r ? r.filter((x) => x.event === 'Login gagal').length : null, 'user_events'); });
+  dash.draw('u_t_foreign', (el) => { const r = G.user(); G.setNum(el, r ? r.filter(isForeign).length : null, 'user_events'); });
+  dash.draw('u_t_no2sv', (el) => { const r = G.rows('accounts'); const s = G.q(); G.setNum(el, r ? r.filter((x) => x['2sv'] === 'Tidak' && (!s || x.email.includes(s))).length : null, 'accounts'); });
+  dash.draw('u_t_find', (el) => { const r = G.find('User'); G.setNum(el, r ? r.length : null, 'findings'); });
+
+  dash.draw('u_c_daily', (el) => {
+    el.replaceChildren();
+    const r = G.user();
+    el.classList.toggle('dash-skeleton', !r && G.loading('user_events'));
+    if (!r) return;
+    const p = dash.params();
+    const days = d3.utcDay.range(new Date(p.start + 'T00:00:00Z'), d3.utcDay.offset(new Date(p.end + 'T00:00:00Z'), 1)).map((d) => d.toISOString().slice(0, 10));
+    const by = new Map(days.map((d) => [d, { day: d, ok: 0, bad: 0 }]));
+    r.forEach((x) => { const o = by.get(x.waktu.slice(0, 10)); if (!o) return; if (x.event === 'Login sukses') o.ok++; else if (x.event === 'Login gagal') o.bad++; });
+    const data = [...by.values()];
+    const W = Math.max(280, el.clientWidth), H = 240;
+    const y = d3.scaleLinear([0, d3.max(data, (d) => d.ok + d.bad) || 1], [H - 24, 8]).nice();
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).style('display', 'block').style('overflow', 'visible');
+    const probe = svg.append('text').attr('font-size', 11).text(G.fmt(y.domain()[1]));
+    const ml = Math.ceil(probe.node().getComputedTextLength()) + 10; probe.remove();
+    const x = d3.scaleBand(days, [ml, W - 4]).paddingInner(0.2);
+    const ticks = y.ticks(4);
+    svg.append('g').selectAll('line').data(ticks).join('line').attr('x1', ml).attr('x2', W - 4).attr('y1', y).attr('y2', y).style('stroke', 'var(--cds-chart-grid)');
+    svg.append('g').selectAll('text').data(ticks).join('text').attr('x', ml - 6).attr('y', (d) => y(d) + 4).attr('text-anchor', 'end').attr('font-size', 11).style('fill', 'var(--color-fg-muted)').text(G.fmt);
+    const step = Math.max(1, Math.ceil(days.length / Math.max(2, Math.floor((W - ml) / 60))));
+    svg.append('g').selectAll('text').data(days.filter((d, i) => i % step === 0)).join('text')
+      .attr('x', (d) => x(d) + x.bandwidth() / 2).attr('y', H - 6).attr('text-anchor', 'middle').attr('font-size', 11).style('fill', 'var(--color-fg-muted)')
+      .text((d) => `${Number(d.slice(8, 10))} ${G.BULAN[Number(d.slice(5, 7)) - 1]}`);
+    const bw = Math.min(32, x.bandwidth()), off = (x.bandwidth() - bw) / 2, rad = Math.min(2, bw / 2);
+    const g = svg.append('g').selectAll('g').data(data).join('g');
+    g.append('rect').attr('x', (d) => x(d.day) + off).attr('width', bw).attr('y', (d) => y(d.ok)).attr('height', (d) => y(0) - y(d.ok)).attr('rx', rad).style('fill', dash.colors[0]);
+    g.append('rect').attr('x', (d) => x(d.day) + off).attr('width', bw).attr('y', (d) => y(d.ok + d.bad)).attr('height', (d) => y(d.ok) - y(d.ok + d.bad)).attr('rx', rad).style('fill', 'var(--cds-chart-status-critical)');
+    const tip = d3.select(el).append('div').attr('class', 'gw-tip').style('display', 'none');
+    g.append('rect').attr('x', (d) => x(d.day)).attr('width', x.bandwidth()).attr('y', 0).attr('height', H - 24).style('fill', 'transparent')
+      .on('mousemove', (ev, d) => {
+        tip.style('display', null).html('');
+        tip.append('div').attr('class', 'gw-tip-h').text(G.tglID(d.day));
+        tip.append('div').text(`Login sukses: ${G.fmt(d.ok)}`);
+        tip.append('div').text(`Login gagal: ${G.fmt(d.bad)}`);
+        const [mx, my] = d3.pointer(ev, el); const tw = tip.node().offsetWidth;
+        tip.style('left', `${Math.min(Math.max(0, mx + 12), el.clientWidth - tw)}px`).style('top', `${Math.max(0, my - 40)}px`);
+      })
+      .on('mouseleave', () => tip.style('display', 'none'));
+  });
+
+  dash.draw('u_c_fail', (el) => {
+    const r = G.user();
+    el.classList.toggle('dash-skeleton', !r && G.loading('user_events'));
+    if (!r) { el.replaceChildren(); return; }
+    G.barsH(el, G.top(r.filter((x) => x.event === 'Login gagal'), 'email', 10), null);
+  });
+  dash.draw('u_c_month', (el) => G.monthTable(el, G.user(), [
+    ['Login sukses', (x) => x.event === 'Login sukses', true],
+    ['Login gagal', (x) => x.event === 'Login gagal', false],
+    ['Login dari luar negeri', isForeign, false],
+    ['Login challenge / verifikasi', (x) => x.event === 'Login challenge' || x.event === 'Verifikasi login', null],
+    ['Sensitive action', (x) => x.event.startsWith('Sensitive action'), false],
+  ]));
+
+  const acctRows = () => {
+    const r = G.rows('accounts'); if (!r) return null;
+    const s = G.q(); const p = dash.params();
+    const out = s ? r.filter((x) => x.email.includes(s)) : (p.issues !== false ? r.filter((x) => x.masalah) : r.slice());
+    return out.sort((a, b) => (b.masalah ? 1 : 0) - (a.masalah ? 1 : 0) || a.email.localeCompare(b.email));
+  };
+  dash.draw('u_n_acct', (el) => { const r = acctRows(); G.setNum(el, r ? r.length : null, 'accounts'); });
+  dash.draw('u_acct', (tb) => {
+    const r = acctRows() || [];
+    tb.replaceChildren(...r.map((x) => {
+      const tr = document.createElement('tr'); tr.dataset.key = x.email;
+      ['email', 'klasifikasi', 'masalah', 'status_hr', 'tgl_hapus_hr', 'org_unit', '2sv', 'login_terakhir'].forEach((k) => {
+        const td = tr.insertCell(); td.textContent = x[k] || ''; td.className = k === 'masalah' ? '' : 'gw-nw';
+        if (k === 'masalah' && x[k]) td.className = /Deactivated|Orphan/.test(x[k]) ? 'gw-bad' : 'gw-warn';
+        if (k === '2sv' && x[k] === 'Tidak') td.className = 'gw-nw gw-bad';
+      });
+      return tr;
+    }));
+  });
+  dash.draw('u_n_log', (el) => { const r = G.user(); G.setNum(el, r ? Math.min(G.MAX, r.length) : null, 'user_events'); });
+  dash.draw('u_log', (tb) => G.fillLog(tb, G.user(), [['waktu', 'gw-nw'], ['email', 'gw-nw'], ['event', 'gw-nw'], ['negara', 'gw-nw'], ['ip', 'gw-nw'], ['login_type', 'gw-nw']]));
+  dash.draw('u_n_find', (el) => { const r = G.find('User'); G.setNum(el, r ? r.length : null, 'findings'); });
+  dash.draw('u_find', (tb) => G.fillFind(tb, G.find('User')));
+})();
+</script>
+
+<script>
+(() => {
+  // ---------- DRIVE ACTIVITY page ----------
+  const G = window.gws;
+  const cnt = (k) => (el) => { const r = G.drive(); G.setNum(el, r ? (k ? r.filter((x) => x.kategori === k).length : r.length) : null, 'drive_events'); };
+  dash.draw('d_t_all', cnt(null));
+  dash.draw('d_t_dl', cnt('Download'));
+  dash.draw('d_t_share', cnt('Perubahan sharing'));
+  dash.draw('d_t_pub', cnt('Dibuka ke publik'));
+  dash.draw('d_t_ext', cnt('Akses akun eksternal'));
+  dash.draw('d_t_find', (el) => { const r = G.find('Drive'); G.setNum(el, r ? r.length : null, 'findings'); });
+  dash.draw('d_c_cat', (el) => {
+    const r = G.drive();
+    el.classList.toggle('dash-skeleton', !r && G.loading('drive_events'));
+    if (!r) { el.replaceChildren(); return; }
+    G.barsH(el, G.top(r, 'kategori', 10), (k) => G.RISK_DRIVE.includes(k));
+  });
+  dash.draw('d_c_dl', (el) => {
+    const r = G.drive();
+    el.classList.toggle('dash-skeleton', !r && G.loading('drive_events'));
+    if (!r) { el.replaceChildren(); return; }
+    G.barsH(el, G.top(r.filter((x) => x.kategori === 'Download'), 'email', 10), null);
+  });
+  dash.draw('d_c_month', (el) => G.monthTable(el, G.drive(), [
+    ['Download', (x) => x.kategori === 'Download', false],
+    ['Perubahan sharing', (x) => x.kategori === 'Perubahan sharing', false],
+    ['Dibuka ke publik', (x) => x.kategori === 'Dibuka ke publik', false],
+    ['Akses akun eksternal', (x) => x.kategori === 'Akses akun eksternal', false],
+  ]));
+  dash.draw('d_n_log', (el) => { const r = G.drive(); G.setNum(el, r ? Math.min(G.MAX, r.length) : null, 'drive_events'); });
+  dash.draw('d_log', (tb) => G.fillLog(tb, G.drive(), [['waktu', 'gw-nw'], ['email', 'gw-nw'], ['kategori', 'gw-nw'], ['event', 'gw-nw'], ['judul', 'gw-wrap'], ['visibilitas', 'gw-nw'], ['owner', 'gw-nw']]));
+  dash.draw('d_n_find', (el) => { const r = G.find('Drive'); G.setNum(el, r ? r.length : null, 'findings'); });
+  dash.draw('d_find', (tb) => G.fillFind(tb, G.find('Drive')));
+})();
+</script>
+
+<script>
+(() => {
+  // ---------- ADMIN ACTIVITY page ----------
+  const G = window.gws;
+  const isRisk = (x) => G.RISK_ADMIN.includes(x.kategori);
+  dash.draw('a_t_all', (el) => { const r = G.admin(); G.setNum(el, r ? r.length : null, 'admin_events'); });
+  dash.draw('a_t_risk', (el) => { const r = G.admin(); G.setNum(el, r ? r.filter(isRisk).length : null, 'admin_events'); });
+  dash.draw('a_t_admins', (el) => { const r = G.admin(); G.setNum(el, r ? new Set(r.map((x) => x.admin)).size : null, 'admin_events'); });
+  dash.draw('a_t_life', (el) => { const r = G.admin(); G.setNum(el, r ? r.filter((x) => x.event === 'User Deletion' || x.event === 'User Suspension').length : null, 'admin_events'); });
+  dash.draw('a_t_find', (el) => { const r = G.find('Admin'); G.setNum(el, r ? r.length : null, 'findings'); });
+  dash.draw('a_c_cat', (el) => {
+    const r = G.admin();
+    el.classList.toggle('dash-skeleton', !r && G.loading('admin_events'));
+    if (!r) { el.replaceChildren(); return; }
+    G.barsH(el, G.top(r, 'kategori', 10), (k) => G.RISK_ADMIN.includes(k));
+  });
+  dash.draw('a_c_who', (el) => {
+    const r = G.admin();
+    el.classList.toggle('dash-skeleton', !r && G.loading('admin_events'));
+    if (!r) { el.replaceChildren(); return; }
+    G.barsH(el, G.top(r, 'admin', 10), null);
+  });
+  dash.draw('a_c_month', (el) => G.monthTable(el, G.admin(), [
+    ['Aksi admin (total)', () => true, null],
+    ['Kebijakan keamanan', (x) => x.kategori === 'Kebijakan keamanan', false],
+    ['Bypass keamanan akun', (x) => x.kategori === 'Bypass keamanan akun', false],
+    ['Privilege', (x) => x.kategori === 'Privilege', false],
+    ['Akun dihapus / suspend', (x) => x.event === 'User Deletion' || x.event === 'User Suspension', null],
+  ]));
+  dash.draw('a_n_log', (el) => { const r = G.admin(); G.setNum(el, r ? Math.min(G.MAX, r.length) : null, 'admin_events'); });
+  dash.draw('a_log', (tb) => G.fillLog(tb, G.admin(), [['waktu', 'gw-nw'], ['admin', 'gw-nw'], ['kategori', 'gw-nw'], ['event', 'gw-nw'], ['target', 'gw-nw'], ['detail', 'gw-wrap']]));
+  dash.draw('a_n_find', (el) => { const r = G.find('Admin'); G.setNum(el, r ? r.length : null, 'findings'); });
+  dash.draw('a_find', (tb) => G.fillFind(tb, G.find('Admin')));
+})();
+</script>
+
+</div>
+</body>
+</html>

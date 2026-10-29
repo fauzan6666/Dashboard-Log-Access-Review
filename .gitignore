@@ -1,0 +1,5 @@
+# Data log berisi data pribadi — jangan di-commit
+site/data/*.json
+.htpasswd
+*.csv
+*.xlsx

@@ -1,0 +1,33 @@
+:root {
+  color-scheme: light;
+  --font-anthropic-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-anthropic-serif: Georgia, "Times New Roman", serif;
+  --color-fg: #1f1e1d; --color-fg-muted: #6b6a65; --color-bg: #faf9f5; --color-panel: #ffffff;
+  --color-border-line: #e4e2d9; --color-ok: #2e7d32; --color-warn: #a15c00; --color-bad: #c0392b;
+  --cds-font-size-caption: .8125rem; --cds-font-size-body: .9375rem; --cds-font-size-heading: 1.0625rem; --cds-font-size-title: 1.875rem;
+  --cds-font-weight-medium: 500;
+  --cds-gap-xs: .25rem; --cds-gap-sm: .5rem; --cds-gap-md: 1rem; --cds-gap-lg: 1.5rem; --cds-gap-xl: 2rem;
+  --cds-pad-xs: .25rem; --cds-pad-sm: .5rem; --cds-pad-md: .875rem; --cds-pad-lg: 1.125rem; --cds-pad-xl: 1.5rem;
+  --cds-radius: 8px;
+  --cds-chart-grid: #ecebe4; --cds-chart-axis: #c9c7bd; --cds-chart-muted: #c9c7bd; --cds-chart-reference: #9a988f;
+  --cds-chart-status-critical: #d64545;
+  --cds-surface-popover: #ffffff; --cds-border: #dcdad0; --cds-shadow-popover: 0 4px 14px rgba(0,0,0,.08);
+  --cds-text-secondary: #6b6a65; --cds-dur-slow: 300ms; --cds-ease-out: cubic-bezier(.2,.8,.2,1);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --color-fg: #ecebe6; --color-fg-muted: #a3a19a; --color-bg: #1b1b1a; --color-panel: #252524;
+    --color-border-line: #3a3936; --color-ok: #6fcf80; --color-warn: #e8a64a; --color-bad: #ff7b6e;
+    --cds-chart-grid: #33322f; --cds-chart-axis: #55534e; --cds-chart-muted: #55534e; --cds-chart-reference: #8a8880;
+    --cds-chart-status-critical: #ef6a5f;
+    --cds-surface-popover: #2c2c2a; --cds-border: #45443f; --cds-shadow-popover: 0 4px 14px rgba(0,0,0,.4);
+    --cds-text-secondary: #a3a19a;
+  }
+}
+html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
+#dash-root { max-width: 1400px; margin-inline: auto; padding: clamp(1rem, 3vw, 2.5rem); box-sizing: border-box; }
+#dash-root [hidden] { display: none !important; }
+.dash-skeleton { color: transparent !important; position: relative; }
+.dash-skeleton::after { content: ""; position: absolute; left: 0; top: 30%; width: 4rem; height: 40%; border-radius: 4px; background: var(--color-border-line); animation: sk 1.2s ease-in-out infinite; }
+@keyframes sk { 50% { opacity: .5; } }
